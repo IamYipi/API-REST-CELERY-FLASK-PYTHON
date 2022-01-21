@@ -88,12 +88,13 @@ def delete(example_id):
 def celery_monitor(string):
     return string
 
-# Celery Task for main page examples
+# Celery Task for examples id
 
 @celery.task(name='celery_example_id')
 def celery_example(string):
 	return string
 
+# Function for update jsonify examples
 
 def update(examples):
 	n = len(examples)
