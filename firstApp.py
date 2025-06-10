@@ -1,6 +1,6 @@
 # export FLASK_APP=firstApp.py
 # flask run
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_celery import make_celery
 import redis
 
@@ -23,9 +23,36 @@ examples = [{'name': "Example 0",
 
 @app.route('/')
 def index():
-    	text = "Welcome Yipi's API REST"
-    	celery_monitor.delay("User in main page")
-    	return text
+        text = "Welcome Yipi's API REST"
+        celery_monitor.delay("User in main page")
+        return text
+
+# Simple health check route
+@app.route('/ping')
+def ping():
+        return jsonify({'message': 'pong'})
+
+# Echo a query parameter
+@app.route('/echo')
+def echo():
+        msg = request.args.get('msg', '')
+        return jsonify({'echo': msg})
+
+# Multiply two numbers from the URL
+@app.route('/multiply/<int:a>/<int:b>')
+def multiply(a, b):
+        return jsonify({'result': a * b})
+
+# Receive JSON payload and return it back
+@app.route('/json', methods=['POST'])
+def json_endpoint():
+        data = request.get_json(silent=True) or {}
+        return jsonify({'you_sent': data})
+
+# Receive form data and echo it
+@app.route('/form', methods=['POST'])
+def form_endpoint():
+        return jsonify({'form_data': request.form.to_dict()})
 
 # For run introduce the next url:
 # http://127.0.0.1:5000/examples
